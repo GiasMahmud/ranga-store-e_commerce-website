@@ -5,60 +5,72 @@ const loadProducts = () => {
 };
 
 
-// show all product in UI 
+/*-------------------------- show all product in UI -------------------------*/
 const showProducts = (products) => {
-  const allProducts = products.map((pd) => pd);
-  for (const product of allProducts) {
-    const image = product.images;
+  for (const product of products) {
+    const image = product.image;
     const div = document.createElement("div");
     div.classList.add("product");
-    div.innerHTML = `<div class="single-product">
-      <div>
-    <img class="product-image" src=${image}></img>
+    div.innerHTML = `<div class="single-product my-3 ms-2 mb-2  shadow-lg p-3 mb-5 bg-body rounded "> <div>
+      <img class="product-image" src=${image}></img>
       </div>
-      <h3>${product.title}</h3>
-      <p>Category: ${product.category}</p>
-      <h2>Price: $ ${product.price}</h2>
-      <button onclick="addToCart(${product.id},${product.price})" id="addToCart-btn" class="buy-now btn btn-success">add to cart</button>
-      <button id="details-btn" class="btn btn-danger">Details</button></div>
+      <h5>${product.title}</h5>
+      <p><span class="fw-bolder">Category</span>: ${product.category}</p>
+      <h5 class="bold">Price: $ ${product.price}</h5>
+      <p> Reviews : </i> <i id="rating-icon" class="fas fa-star"></i> <i id="rating-icon" class="fas fa-star"></i>  <i id="rating-icon" class="fas fa-star-half-alt"></i> ${product.rating.count}
+      <p> Average Rating : <i id="rating-icon" class="fas fa-star"></i> <i id="rating-icon" class="fas fa-star"></i>${product.rating.rate}
+      <br>
+      <br>
+      <button onclick="addToCart(${product.price})" id="addToCart-btn" class="buy-now btn  btn-outline-dark">Add to cart</button>
+      <button id="details-btn" class="btn btn-outline-dark">Details</button></div>
       `;
     document.getElementById("all-products").appendChild(div);
   }
 };
 let count = 0;
-const addToCart = (id, price) => {
+const addToCart = (price) => {
   count = count + 1;
-  updatePrice("price", price);
+  updatePrice('price', price);
 
   updateTaxAndCharge();
+  updateTotal()
+
   document.getElementById("total-Products").innerText = count;
 };
 
 const getInputValue = (id) => {
   const element = document.getElementById(id).innerText;
-  const converted = parseInt(element);
+  const converted = parseFloat(element);
   return converted;
+
 };
 
-// main price update function
+/* -----------------  main price update function -----------------------*/
 const updatePrice = (id, value) => {
   const convertedOldPrice = getInputValue(id);
   const convertPrice = parseFloat(value);
   const total = convertedOldPrice + convertPrice;
-  document.getElementById(id).innerText = Math.round(total);
+  document.getElementById(id).innerText = total.toFixed(2);
+  return total;
+
 };
 
-// set innerText function
+/* -----------------  Set innerText function -----------------------*/
+
 const setInnerText = (id, value) => {
   document.getElementById(id).innerText = Math.round(value);
+  getInputValue(id)
+
 };
 
-// update delivery charge and total Tax
+/* --------------------  update delivery charge and total Tax -----------------------*/
+
 const updateTaxAndCharge = () => {
   const priceConverted = getInputValue("price");
   if (priceConverted > 200) {
     setInnerText("delivery-charge", 30);
     setInnerText("total-tax", priceConverted * 0.2);
+
   }
   if (priceConverted > 400) {
     setInnerText("delivery-charge", 50);
@@ -68,13 +80,14 @@ const updateTaxAndCharge = () => {
     setInnerText("delivery-charge", 60);
     setInnerText("total-tax", priceConverted * 0.4);
   }
+
+
 };
 
 //grandTotal update function
 const updateTotal = () => {
   const grandTotal =
-    getInputValue("price") + getInputValue("delivery-charge") +
-    getInputValue("total-tax");
-  document.getElementById("total").innerText = grandTotal;
+    getInputValue('price') + getInputValue('delivery-charge') + getInputValue("total-tax");
+  document.getElementById("total").innerText = grandTotal.toFixed(2);
 };
 loadProducts();
